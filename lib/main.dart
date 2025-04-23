@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskmaster/screens/tasks/tasks_screen.dart';
 // Добавьте эту строку
 
 void main() => runApp(const TaskMasterApp());
@@ -78,15 +79,6 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
-  }
-}
-
-class TasksScreen extends StatelessWidget {
-  const TasksScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Экран заданий'));
   }
 }
 
