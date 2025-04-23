@@ -17,27 +17,26 @@ class TasksScreen extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: Colors.blue,
-        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Большая синяя кнопка
+            // Большая кнопка "Добавить задачу"
             _buildMainButton(
-              context,
               text: "Добавить задачу",
               icon: Icons.add,
               color: Colors.blue,
+              onPressed: () => _handleAddTask(context),
             ),
             const SizedBox(height: 20),
             
-            // Большая зеленая кнопка
+            // Большая кнопка "Задачи на 7 дней"
             _buildMainButton(
-              context,
               text: "Задачи на 7 дней",
               icon: Icons.calendar_month,
               color: Colors.green,
+              onPressed: () => _handleWeeklyTasks(context),
             ),
             const SizedBox(height: 30),
             
@@ -45,18 +44,20 @@ class TasksScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildSecondaryButton(
-                    "Выполненные",
-                    Icons.check_circle,
-                    Colors.grey[300]!,
+                  child: _buildSmallButton(
+                    text: "Выполненные",
+                    icon: Icons.check_circle,
+                    color: Colors.grey[300]!,
+                    onPressed: () => _showCompletedTasks(context),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _buildSecondaryButton(
-                    "Незавершенные",
-                    Icons.pending_actions,
-                    Colors.orange[200]!,
+                  child: _buildSmallButton(
+                    text: "Незавершенные",
+                    icon: Icons.pending_actions,
+                    color: Colors.orange[200]!,
+                    onPressed: () => _showPendingTasks(context),
                   ),
                 ),
               ],
@@ -67,53 +68,78 @@ class TasksScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMainButton(
-    BuildContext context, {
+  Widget _buildMainButton({
     required String text,
     required IconData icon,
     required Color color,
+    required VoidCallback onPressed,
   }) {
     return SizedBox(
       width: double.infinity,
-      height: 60,
-      child: ElevatedButton.icon(
+      height: 120,
+      child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(60),
           ),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
         ),
-        onPressed: () {},
-        icon: Icon(icon, size: 24),
-        label: Text(
-          text,
-          style: const TextStyle(fontSize: 18),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: Colors.white),
+            const SizedBox(width: 15),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSecondaryButton(
-    String text,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildSmallButton({
+    required String text,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
     return SizedBox(
-      height: 50,
+      height: 60,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         icon: Icon(icon, size: 20),
         label: Text(text),
       ),
     );
+  }
+
+  void _handleAddTask(BuildContext context) {
+    print('Добавление задачи');
+  }
+
+  void _handleWeeklyTasks(BuildContext context) {
+    print('Просмотр задач на неделю');
+  }
+
+  void _showCompletedTasks(BuildContext context) {
+    print('Показать выполненные задачи');
+  }
+
+  void _showPendingTasks(BuildContext context) {
+    print('Показать незавершенные задачи');
   }
 }
