@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'screens/tasks/tasks_screen.dart';
 // Добавьте эту строку
 
 void main() => runApp(const TaskMasterApp());
