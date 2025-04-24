@@ -5,10 +5,21 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Дополнительные функции',
-        style: TextStyle(fontSize: 24),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'TaskMaster',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+      ),
+      body: const Center(
+        child: Text('Дополнительные функции'),
       ),
     );
   }

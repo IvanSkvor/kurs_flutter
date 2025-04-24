@@ -18,7 +18,7 @@ class TasksScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -33,7 +33,7 @@ class TasksScreen extends StatelessWidget {
             
             // Большая кнопка "Задачи на 7 дней"
             _buildMainButton(
-              text: "Задачи на 7 дней",
+              text: "Задачи на 7 дней", 
               icon: Icons.calendar_month,
               color: Colors.green,
               onPressed: () => _handleWeeklyTasks(context),
@@ -68,6 +68,7 @@ class TasksScreen extends StatelessWidget {
     );
   }
 
+  // Метод для больших кнопок
   Widget _buildMainButton({
     required String text,
     required IconData icon,
@@ -81,7 +82,7 @@ class TasksScreen extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(60),
+            borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.all(20),
         ),
@@ -105,6 +106,7 @@ class TasksScreen extends StatelessWidget {
     );
   }
 
+  // Метод для маленьких кнопок
   Widget _buildSmallButton({
     required String text,
     required IconData icon,
@@ -116,30 +118,35 @@ class TasksScreen extends StatelessWidget {
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         onPressed: onPressed,
         icon: Icon(icon, size: 20),
-        label: Text(text),
+        label: Text(
+          text,
+          style: const TextStyle(fontSize: 14),
+        ),
       ),
     );
   }
 
   void _handleAddTask(BuildContext context) {
-    print('Добавление задачи');
+    // Логика добавления задачи
   }
 
   void _handleWeeklyTasks(BuildContext context) {
-    print('Просмотр задач на неделю');
+    // Логика задач на неделю
   }
 
   void _showCompletedTasks(BuildContext context) {
-    print('Показать выполненные задачи');
+    // Логика показа выполненных задач
   }
 
   void _showPendingTasks(BuildContext context) {
-    print('Показать незавершенные задачи');
+    // Логика показа незавершенных задач
   }
 }

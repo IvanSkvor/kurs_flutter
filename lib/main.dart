@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-// Все импорты экранов
 import 'screens/tasks/tasks_screen.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/more_screen.dart';
 import 'screens/settings_screen.dart';
 
-void main() {
-  runApp(const TaskMasterApp());
-}
+void main() => runApp(const TaskMasterApp());
 
 class TaskMasterApp extends StatelessWidget {
   const TaskMasterApp({super.key});
@@ -17,8 +14,11 @@ class TaskMasterApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.grey,
+        ),
       ),
       home: const MainScreen(),
     );
@@ -46,26 +46,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.task),
-            label: 'Задачи',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_month),
-            label: 'Календарь',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.more_horiz),
-            label: 'Ещё',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Настройки',
-          ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Задачи'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Календарь'),
+          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'Ещё'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Настройки'),
         ],
       ),
     );
