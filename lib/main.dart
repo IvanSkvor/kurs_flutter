@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/tasks/tasks_screen.dart';
-import 'screens/calendar_screen.dart';
-import 'screens/more_screen.dart';
-import 'screens/settings_screen.dart';
+import 'package:taskmaster/screens/tasks/tasks_screen.dart';
+import 'package:taskmaster/screens/calendar_screen.dart';
+import 'package:taskmaster/screens/more_screen.dart';
+import 'package:taskmaster/screens/settings_screen.dart'; // Исключаем конфликт
 
 void main() => runApp(const TaskMasterApp());
 
@@ -36,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const TasksScreen(),
+    const TasksScreen(), // Теперь без конфликтов
     const CalendarScreen(),
     const MoreScreen(),
     const SettingsScreen(),
