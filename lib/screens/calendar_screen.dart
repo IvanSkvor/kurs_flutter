@@ -11,7 +11,6 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _focusedDay;
   late DateTime _selectedDay;
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
   void initState() {
@@ -42,20 +41,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
           lastDay: DateTime(2100),
           focusedDay: _focusedDay,
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-          calendarFormat: _calendarFormat,
+          calendarFormat: CalendarFormat.month, // Только месячный формат
+          headerStyle: const HeaderStyle(
+            formatButtonVisible: false, // Скрываем все кнопки формата
+            titleCentered: true,
+          ),
+          onPageChanged: (focusedDay) {
+            setState(() => _focusedDay = focusedDay);
+          },
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               _selectedDay = selectedDay;
               _focusedDay = focusedDay;
             });
           },
-          calendarStyle: CalendarStyle(
-            selectedDecoration: const BoxDecoration(
+          calendarStyle: const CalendarStyle(
+            selectedDecoration: BoxDecoration(
               color: Colors.blue,
               shape: BoxShape.circle,
             ),
             todayDecoration: BoxDecoration(
-              color: Colors.blue.shade200,
+              color: Colors.blueAccent,
               shape: BoxShape.circle,
             ),
           ),
