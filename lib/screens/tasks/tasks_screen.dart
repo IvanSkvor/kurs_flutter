@@ -11,6 +11,7 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   final List<Map<String, dynamic>> _pendingTasks = [];
   final List<Map<String, dynamic>> _completedTasks = [];
+  final List<Map<String, dynamic>> _overdueTasks = [];
   final _taskNameController = TextEditingController();
   DateTime? _selectedDate;
   bool _showError = false;
@@ -32,6 +33,17 @@ class _TasksScreenState extends State<TasksScreen> {
   void initState() {
     super.initState();
     _removeOldCompletedTasks();
+    _checkOverdueTasks();
+    _setupPeriodicCheck();
+  }
+
+  void _setupPeriodicCheck() {
+    Future.delayed(const Duration(minutes: 1), () {
+      if (mounted) {
+        _checkOverdueTasks();
+        _setupPeriodicCheck();
+      }
+    });
   }
 
   @override
@@ -44,13 +56,25 @@ class _TasksScreenState extends State<TasksScreen> {
     final now = DateTime.now();
     setState(() {
       _completedTasks.removeWhere((task) {
-        final daysPassed = now.difference(task['date']).inDays;
+        final daysPassed = now.difference(task['date'] as DateTime).inDays;
         return daysPassed > 30;
       });
     });
   }
 
-  // Метод для создания больших кнопок
+  void _checkOverdueTasks() {
+    final now = DateTime.now();
+    setState(() {
+      _pendingTasks.removeWhere((task) {
+        if ((task['date'] as DateTime).isBefore(now)) {
+          _overdueTasks.add(task);
+          return true;
+        }
+        return false;
+      });
+    });
+  }
+
   Widget _buildMainButton({
     required String text,
     required IconData icon,
@@ -61,13 +85,13 @@ class _TasksScreenState extends State<TasksScreen> {
       width: double.infinity,
       height: 120,
       child: ElevatedButton(
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -86,26 +110,29 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  // Метод для создания маленьких кнопок
   Widget _buildSmallButton({
     required String text,
     required IconData icon,
     required Color color,
     required VoidCallback onPressed,
   }) {
-    return SizedBox(
-      height: 60,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-        onPressed: onPressed,
-        icon: Icon(icon, size: 20),
-        label: Text(text),
+        minimumSize: const Size(double.infinity, 60),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 8),
+          Text(text),
+        ],
       ),
     );
   }
@@ -150,7 +177,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     text: "Завершенные",
                     icon: Icons.check_circle,
                     color: Colors.grey[300]!,
-                    onPressed: () => _showTasksDialog(context, false),
+                    onPressed: () => _showTasksDialog(context, 'completed'),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -159,7 +186,20 @@ class _TasksScreenState extends State<TasksScreen> {
                     text: "Незавершенные",
                     icon: Icons.pending_actions,
                     color: Colors.orange[200]!,
-                    onPressed: () => _showTasksDialog(context, true),
+                    onPressed: () => _showTasksDialog(context, 'pending'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSmallButton(
+                    text: "Просроченные",
+                    icon: Icons.warning,
+                    color: Colors.red[200]!,
+                    onPressed: () => _showTasksDialog(context, 'overdue'),
                   ),
                 ),
               ],
@@ -267,9 +307,17 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  void _showTasksDialog(BuildContext context, bool showPending) {
-    final tasks = showPending ? _pendingTasks : _completedTasks;
-    final title = showPending ? 'Незавершенные задачи' : 'Завершенные задачи';
+  void _showTasksDialog(BuildContext context, String type) {
+    final tasks = type == 'completed' 
+        ? _completedTasks 
+        : type == 'pending' 
+            ? _pendingTasks 
+            : _overdueTasks;
+    final title = type == 'completed' 
+        ? 'Завершенные задачи' 
+        : type == 'pending' 
+            ? 'Незавершенные задачи' 
+            : 'Просроченные задачи';
 
     showDialog(
       context: context,
@@ -297,16 +345,16 @@ class _TasksScreenState extends State<TasksScreen> {
                         child: ListTile(
                           title: Text(task['name']),
                           subtitle: Text(
-                            DateFormat('dd.MM.yyyy').format(task['date']),
+                            DateFormat('dd.MM.yyyy').format(task['date'] as DateTime),
                           ),
-                          trailing: showPending
+                          trailing: type == 'pending'
                               ? IconButton(
                                   icon: const Icon(Icons.check, color: Colors.green),
                                   onPressed: () {
                                     setState(() {
                                       _completeTask(index);
                                       Navigator.pop(context);
-                                      _showTasksDialog(context, true);
+                                      _showTasksDialog(context, 'pending');
                                     });
                                   },
                                 )
@@ -343,12 +391,14 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   void _addTask({String? category}) {
+    final newTask = {
+      'name': _taskNameController.text,
+      'date': _selectedDate!,
+      'category': category,
+    };
+
     setState(() {
-      _pendingTasks.add({
-        'name': _taskNameController.text,
-        'date': _selectedDate!,
-        'category': category,
-      });
+      _pendingTasks.add(newTask); // Всегда добавляем в "Незавершенные"
       _taskNameController.clear();
       _selectedDate = null;
     });

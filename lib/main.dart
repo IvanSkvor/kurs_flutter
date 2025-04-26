@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taskmaster/screens/tasks/tasks_screen.dart';
 import 'package:taskmaster/screens/calendar_screen.dart';
 import 'package:taskmaster/screens/more_screen.dart';
-import 'package:taskmaster/screens/settings_screen.dart'; // Исключаем конфликт
+import 'package:taskmaster/screens/settings_screen.dart';
 
 void main() => runApp(const TaskMasterApp());
 
